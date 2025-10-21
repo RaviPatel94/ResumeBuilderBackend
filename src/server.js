@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "https://resume-builder-frontend-45va.vercel.app/" ||process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: "https://resume-builder-frontend-45va.vercel.app" ||process.env.FRONTEND_URL || "http://localhost:3000",
     credentials: true,
   })
 );
