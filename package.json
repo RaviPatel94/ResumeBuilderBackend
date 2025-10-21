@@ -1,23 +1,36 @@
 {
-  "name": "backend",
+  "name": "resume-builder-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend API for Resume Builder",
+  "main": "src/server.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "NODE_ENV=production node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "node src/server.js"
   },
-  "keywords": [],
+  "keywords": [
+    "resume",
+    "builder",
+    "api",
+    "express",
+    "supabase"
+  ],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "@supabase/supabase-js": "^2.76.0",
-    "bcryptjs": "^3.0.2",
+    "@supabase/supabase-js": "^2.39.0",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "dotenv": "^16.6.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
