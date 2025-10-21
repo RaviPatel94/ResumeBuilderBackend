@@ -14,10 +14,10 @@ export const register = async (req, res) => {
       });
     }
 
-    if (password.length < 6) {
+    if (password.length < 4) {
       return res.status(400).json({
         success: false,
-        message: 'Password must be at least 6 characters'
+        message: 'Password must be at least 4 characters'
       });
     }
 
@@ -42,7 +42,8 @@ export const register = async (req, res) => {
       });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Changed from bcrypt to bcryptjs
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     const { data: newUser, error } = await supabase
       .from('users')
@@ -109,7 +110,8 @@ export const login = async (req, res) => {
       });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    // Changed from bcrypt to bcryptjs
+    const isPasswordValid = await bcryptjs.compare(password, user.password);
 
     if (!isPasswordValid) {
       return res.status(401).json({

@@ -64,16 +64,33 @@ export const getProject = async (req, res) => {
   }
 };
 
-// Create new project
+// backend/src/controllers/projectController.js
 export const createProject = async (req, res) => {
   try {
     const { userId } = req.user;
     const { id, name, template, resume, styles, createdAt, updatedAt } = req.body;
 
+    console.log('Creating project for user:', userId);
+    console.log('Project ID:', id);
+
     if (!id || !name || !template || !resume || !styles) {
       return res.status(400).json({
         success: false,
         message: 'Missing required fields'
+      });
+    }
+
+    // Check if project already exists
+    const { data: existingProject } = await supabase
+      .from('projects')
+      .select('id')
+      .eq('id', id)
+      .single();
+
+    if (existingProject) {
+      return res.status(409).json({
+        success: false,
+        message: 'Project with this ID already exists'
       });
     }
 
@@ -93,20 +110,24 @@ export const createProject = async (req, res) => {
       .single();
 
     if (projectError) {
-      console.error('Project creation error:', projectError);
+      console.error('Supabase project creation error:', projectError);
       return res.status(500).json({
         success: false,
-        message: 'Failed to create project'
+        message: 'Failed to create project in database',
+        error: projectError.message
       });
     }
 
+    console.log('Project created successfully:', project.id);
+
+    // Update user's metadata
     const { data: user } = await supabase
       .from('users')
       .select('projects_metadata')
       .eq('id', userId)
       .single();
 
-    const metadata = user.projects_metadata || [];
+    const metadata = user?.projects_metadata || [];
     metadata.unshift({
       id: project.id,
       name: project.name,
@@ -128,14 +149,21 @@ export const createProject = async (req, res) => {
     console.error('Create project error:', error);
     res.status(500).json({
       success: false,
-      message: 'Internal server error'
+      message: 'Internal server error',
+      error: error.message
     });
   }
 };
 
-// Update project
+
+// backend/src/controllers/projectController.js
 export const updateProject = async (req, res) => {
   try {
+    console.log('Update request received'); // Debug log
+    console.log('User:', req.user); // Debug log
+    console.log('Params:', req.params); // Debug log
+    console.log('Body:', req.body); // Debug log
+    
     const { userId } = req.user;
     const { id } = req.params;
     const { name, template, resume, styles } = req.body;
@@ -164,12 +192,14 @@ export const updateProject = async (req, res) => {
       .single();
 
     if (updateError || !project) {
+      console.error('Supabase update error:', updateError); // Debug log
       return res.status(404).json({
         success: false,
         message: 'Project not found or update failed'
       });
     }
 
+    // Update metadata
     const { data: user } = await supabase
       .from('users')
       .select('projects_metadata')
@@ -206,6 +236,7 @@ export const updateProject = async (req, res) => {
     });
   }
 };
+
 
 // Delete project
 export const deleteProject = async (req, res) => {
